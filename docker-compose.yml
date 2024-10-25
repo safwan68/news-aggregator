@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  news:
+    build: .
+    container_name: news_aggregator
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    stdin_open: true
+    tty: true
