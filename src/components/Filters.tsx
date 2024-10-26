@@ -2,10 +2,6 @@ import React, { useState } from "react";
 import {
   TextField,
   Button,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
   Box,
   Typography,
   InputAdornment,
@@ -18,7 +14,25 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import CloseIcon from "@mui/icons-material/Close";
-import { CATEGORIES, CATEGORY_LABEL, CLEAR_FILTER, APPLY_FILTER, SOURCE, SOURCE_LABEL, FILTERS, FILTER, FROM_DATE, TO_DATE, AUTHOR, GENERAL, ALL } from "../constants/constants";
+import {
+  CATEGORIES,
+  CATEGORY_LABEL,
+  CLEAR_FILTER,
+  APPLY_FILTER,
+  SOURCE,
+  SOURCE_LABEL,
+  FILTERS,
+  FILTER,
+  FROM_DATE,
+  TO_DATE,
+  AUTHOR,
+  GENERAL,
+  ALL,
+} from "../constants/constants";
+import SelectField from "./customComponents/SelectField";
+import DateField from "./customComponents/DateField";
+import CustomButton from "./customComponents/CustomBtn";
+import { styles } from "./styles/filterStyles";
 
 interface FiltersProps {
   query: string;
@@ -27,7 +41,12 @@ interface FiltersProps {
   onFilter: (filters: any) => void;
 }
 
-export const Filters: React.FC<FiltersProps> = ({ query, onSearch, onFilter, setQuery }) => {
+export const Filters: React.FC<FiltersProps> = ({
+  query,
+  onSearch,
+  onFilter,
+  setQuery,
+}) => {
   const [category, setCategory] = useState<string>(GENERAL);
   const [source, setSource] = useState<string>(ALL);
   const [author, setAuthor] = useState<string>("");
@@ -48,15 +67,15 @@ export const Filters: React.FC<FiltersProps> = ({ query, onSearch, onFilter, set
     setAuthor("");
     setFromDate("");
     setToDate("");
-  
+
     const clearedFilters = {
-      category: "",   
-      source: ALL,  
-      author: "",     
-      fromDate: "",  
-      toDate: "",     
+      category: GENERAL,
+      source: ALL,
+      author: "",
+      fromDate: "",
+      toDate: "",
     };
-    
+
     onFilter(clearedFilters);
     setFilterOpen(false);
   };
@@ -71,22 +90,11 @@ export const Filters: React.FC<FiltersProps> = ({ query, onSearch, onFilter, set
     };
     onFilter(updatedFilters);
     setFilterOpen(false);
-  }; 
+  };
 
   return (
-    <Box
-      sx={{ padding: "1rem", borderRadius: "20px" }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          mb: 2,
-          flexDirection: "row",
-          gap: 1,
-        }}
-      >
+    <Box sx={styles.box}>
+      <Box sx={styles.searchContainer}>
         {/* Search Field */}
         <TextField
           variant="outlined"
@@ -94,15 +102,7 @@ export const Filters: React.FC<FiltersProps> = ({ query, onSearch, onFilter, set
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleSearch}
-          sx={{
-            width: { xs: "70%", md: "50%" },
-            borderRadius: "20px",
-            height: "50px",
-            backgroundColor: "#fff",
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "20px",
-            },
-          }}
+          sx={styles.textField}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -118,17 +118,7 @@ export const Filters: React.FC<FiltersProps> = ({ query, onSearch, onFilter, set
         <Button
           onClick={() => setFilterOpen(true)}
           startIcon={<FilterAltIcon />}
-          sx={{
-            display: { xs: "none", md: "flex" }, 
-            backgroundColor: "#1976d2",
-            color: "#fff",
-            padding: 1.5,
-            marginLeft: 1,
-            borderRadius: "20px",
-            "&:hover": {
-              backgroundColor: "#155a8a",
-            },
-          }}
+          sx={styles.filterButton}
         >
           {FILTER}
         </Button>
@@ -136,17 +126,7 @@ export const Filters: React.FC<FiltersProps> = ({ query, onSearch, onFilter, set
         {/* Filter Icon for mobile screens */}
         <IconButton
           onClick={() => setFilterOpen(true)}
-          sx={{
-            display: { xs: "block", md: "none" }, 
-            width: "50px",
-            height: "50px",
-            backgroundColor: "#1976d2",
-            color: "#fff",
-            borderRadius: "50%",
-            "&:hover": {
-              backgroundColor: "#155a8a",
-            },
-          }}
+          sx={styles.mobileFilterButton}
         >
           <FilterAltIcon />
         </IconButton>
@@ -156,28 +136,11 @@ export const Filters: React.FC<FiltersProps> = ({ query, onSearch, onFilter, set
       <Modal
         open={filterOpen}
         onClose={() => setFilterOpen(false)}
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: { xs: "1rem", md: "2rem" },
-        }}
+        sx={styles.modal}
       >
-        <Card
-          sx={{
-            width: { xs: "100%", md: "50%" },
-            borderRadius: "20px",
-            maxHeight: { xs: "80vh", md: "auto" },
-            overflowY: { xs: "scroll", md: "visible" },
-            boxShadow: 3,
-          }}
-        >
+        <Card sx={styles.card}>
           <CardContent>
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
+            <Box sx={styles.modalHeader}>
               <Typography variant="h6">{FILTERS}</Typography>
               <IconButton onClick={() => setFilterOpen(false)}>
                 <CloseIcon />
@@ -195,80 +158,49 @@ export const Filters: React.FC<FiltersProps> = ({ query, onSearch, onFilter, set
                 />
               </Grid>
               <Grid item xs={12} md={6}>
-                <FormControl fullWidth>
-                  <InputLabel>{CATEGORY_LABEL}</InputLabel>
-                  <Select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    label={CATEGORY_LABEL}
-                  >
-                    {CATEGORIES.map((cat) => (
-                      <MenuItem key={cat.value} value={cat.value}>
-                        {cat.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth>
-                  <InputLabel>{SOURCE_LABEL}</InputLabel>
-                  <Select
-                    value={source}
-                    onChange={(e) => setSource(e.target.value)}
-                    label={SOURCE_LABEL}
-                  >
-                    {SOURCE.map((cat) => (
-                      <MenuItem key={cat.value} value={cat.value}>
-                        {cat.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  label={FROM_DATE}
-                  type="date"
-                  InputLabelProps={{ shrink: true }}
-                  value={fromDate}
-                  onChange={(e) => setFromDate(e.target.value)}
-                  fullWidth
+                <SelectField
+                  label={CATEGORY_LABEL}
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value as string)}
+                  options={CATEGORIES}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
-                <TextField
+                <SelectField
+                  label={SOURCE_LABEL}
+                  value={source}
+                  onChange={(e) => setSource(e.target.value as string)}
+                  options={SOURCE}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <DateField
+                  label={FROM_DATE}
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <DateField
                   label={TO_DATE}
-                  type="date"
-                  InputLabelProps={{ shrink: true }}
                   value={toDate}
                   onChange={(e) => setToDate(e.target.value)}
-                  fullWidth
                 />
               </Grid>
             </Grid>
 
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mt: 3,
-              }}
-            >
-              <Button
+            <Box sx={styles.buttonContainer}>
+              <CustomButton
                 variant="outlined"
                 onClick={handleClearFilter}
-                sx={{ borderRadius: "20px" }}
-              >
-                {CLEAR_FILTER}
-              </Button>
-              <Button
+                label={CLEAR_FILTER}
+              />
+              <CustomButton
                 variant="contained"
                 onClick={handleFilter}
-                sx={{ backgroundColor: "#1976d2", borderRadius: "20px" }}
-              >
-                {APPLY_FILTER}
-              </Button>
+                label={APPLY_FILTER}
+                sx={{ backgroundColor: "#1976d2" }}
+              />
             </Box>
           </CardContent>
         </Card>
