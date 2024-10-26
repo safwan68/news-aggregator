@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { fetchArticles } from "../services/api";
 import { Grid, Typography, CircularProgress, Box } from "@mui/material";
 import { ArticleCard } from "./ArticleCard";
+import { FAILED_TO_ARTICLES_ERR_MSG, NO_ARTICLES_FOUND } from "../constants/constants";
 
 interface NewsFeedProps {
   query: string;
@@ -37,7 +38,7 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({ query, filters }) => {
 
       setArticles(data.length ? data : []);
     } catch (err) {
-      setError("Failed to load articles. Please try again later.");
+      setError(FAILED_TO_ARTICLES_ERR_MSG);
     } finally {
       setLoading(false);
     }
@@ -80,7 +81,7 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({ query, filters }) => {
           ))
         ) : (
           <Typography variant="body1" align="center" sx={{ width: "100%" }}>
-            No articles found.
+            {NO_ARTICLES_FOUND}
           </Typography>
         )}
       </Grid>

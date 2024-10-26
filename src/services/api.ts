@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ALL, GENERAL, NEWS, TOP_STORIES, UNKNOWN } from "../constants/constants";
 
 // Result fields
 interface Article {
@@ -47,12 +48,12 @@ const buildNewsApiUrl = (
   author: string
 ) => {
   let baseUrl = "https://newsapi.org/v2/";
-  baseUrl += category && category !== "All" ? "top-headlines" : "everything";
+  baseUrl += category && category !== GENERAL ? "top-headlines" : "everything";
 
   const params = buildQueryParams({
     apiKey: API_KEYS.newsApi,
-    q: query || "news",
-    category: category !== "All" ? category : undefined,
+    q: query || NEWS,
+    ...(category !== GENERAL && { category }), 
     from: fromDate,
     to: toDate,
     author,
@@ -74,7 +75,7 @@ const buildGuardianApiUrl = (
     q: query,
     "from-date": fromDate,
     "to-date": toDate,
-    section: category !== "general" ? category : undefined,
+    section: category !== GENERAL ? category : NEWS,
     byline: author
   });
 
@@ -93,7 +94,7 @@ const buildNytApiUrl = (
     q: query,
     begin_date: fromDate ? fromDate.replace(/-/g, "") : undefined,
     end_date: toDate ? toDate.replace(/-/g, "") : undefined,
-    fq: category !== "general" ? category : undefined,
+    fq: category !== GENERAL ? category : TOP_STORIES,
     "byline:": author,
     fl: "headline,web_url,byline,multimedia"
   });
@@ -108,9 +109,9 @@ const newsApiResponse = (data: any): Article[] =>
     title: article.title,
     description: article.description || "No description available",
     url: article.url,
-    source: { name: article.source?.name || "Unknown" },
+    source: { name: article.source?.name || UNKNOWN },
     urlToImage: article.urlToImage || "",
-    author: article.author || "Unknown"
+    author: article.author || UNKNOWN
   }));
 
 const guardianResponse = (data: any): Article[] =>
@@ -120,7 +121,7 @@ const guardianResponse = (data: any): Article[] =>
     url: result.webUrl,
     source: { name: "The Guardian" },
     urlToImage: result.fields?.thumbnail || "",
-    author: result.fields?.byline || "Unknown"
+    author: result.fields?.byline || UNKNOWN
   }));
 
   const nytResponse = (data: any): Article[] =>
@@ -139,7 +140,7 @@ const guardianResponse = (data: any): Article[] =>
         url: doc.web_url,
         source: { name: doc.source || "The New York Times" },
         urlToImage: imageUrl,
-        author: doc.byline?.original || "Unknown"
+        author: doc.byline?.original || UNKNOWN
       };
     });
   
@@ -155,17 +156,17 @@ export const fetchArticles = async (
 ): Promise<Article[]> => {
   const requests: Promise<Article[]>[] = [];
 
-  if (source === "All" || source === "news-api") {
+  if (source === ALL || source === "news-api") {
     const newsApiUrl = buildNewsApiUrl(query, category, fromDate, toDate, author);
     requests.push(fetchFromApi(newsApiUrl, newsApiResponse));
   }
 
-  if (source === "All" || source === "the-guardian") {
+  if (source === ALL || source === "the-guardian") {
     const guardianUrl = buildGuardianApiUrl(query, category, fromDate, toDate, author);
     requests.push(fetchFromApi(guardianUrl, guardianResponse));
   }
 
-  if (source === "All" || source === "nytimes") {
+  if (source === ALL || source === "nytimes") {
     const nytUrl = buildNytApiUrl(query, category, fromDate, toDate, author);
     requests.push(fetchFromApi(nytUrl, nytResponse));
   }

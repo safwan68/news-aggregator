@@ -18,6 +18,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import CloseIcon from "@mui/icons-material/Close";
+import { CATEGORIES, CATEGORY_LABEL, CLEAR_FILTER, APPLY_FILTER, SOURCE, SOURCE_LABEL, FILTERS, FILTER, FROM_DATE, TO_DATE, AUTHOR, GENERAL, ALL } from "../constants/constants";
 
 interface FiltersProps {
   query: string;
@@ -27,8 +28,8 @@ interface FiltersProps {
 }
 
 export const Filters: React.FC<FiltersProps> = ({ query, onSearch, onFilter, setQuery }) => {
-  const [category, setCategory] = useState<string>("general");
-  const [source, setSource] = useState<string>("All");
+  const [category, setCategory] = useState<string>(GENERAL);
+  const [source, setSource] = useState<string>(ALL);
   const [author, setAuthor] = useState<string>("");
   const [fromDate, setFromDate] = useState<string>("");
   const [toDate, setToDate] = useState<string>("");
@@ -42,15 +43,15 @@ export const Filters: React.FC<FiltersProps> = ({ query, onSearch, onFilter, set
   };
 
   const handleClearFilter = () => {
-    setCategory("");
-    setSource("All");
+    setCategory(GENERAL);
+    setSource(ALL);
     setAuthor("");
     setFromDate("");
     setToDate("");
   
     const clearedFilters = {
       category: "",   
-      source: "All",  
+      source: ALL,  
       author: "",     
       fromDate: "",  
       toDate: "",     
@@ -70,7 +71,7 @@ export const Filters: React.FC<FiltersProps> = ({ query, onSearch, onFilter, set
     };
     onFilter(updatedFilters);
     setFilterOpen(false);
-  };
+  }; 
 
   return (
     <Box
@@ -129,7 +130,7 @@ export const Filters: React.FC<FiltersProps> = ({ query, onSearch, onFilter, set
             },
           }}
         >
-          Filter
+          {FILTER}
         </Button>
 
         {/* Filter Icon for mobile screens */}
@@ -177,7 +178,7 @@ export const Filters: React.FC<FiltersProps> = ({ query, onSearch, onFilter, set
               justifyContent="space-between"
               alignItems="center"
             >
-              <Typography variant="h6">Apply Filters</Typography>
+              <Typography variant="h6">{FILTERS}</Typography>
               <IconButton onClick={() => setFilterOpen(false)}>
                 <CloseIcon />
               </IconButton>
@@ -186,7 +187,7 @@ export const Filters: React.FC<FiltersProps> = ({ query, onSearch, onFilter, set
             <Grid container spacing={2} sx={{ mt: 2 }}>
               <Grid item xs={12} md={6}>
                 <TextField
-                  label="Author"
+                  label={AUTHOR}
                   variant="outlined"
                   value={author}
                   onChange={(e) => setAuthor(e.target.value)}
@@ -195,37 +196,39 @@ export const Filters: React.FC<FiltersProps> = ({ query, onSearch, onFilter, set
               </Grid>
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
-                  <InputLabel>Category</InputLabel>
+                  <InputLabel>{CATEGORY_LABEL}</InputLabel>
                   <Select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    label="Category"
+                    label={CATEGORY_LABEL}
                   >
-                    <MenuItem value="general">General</MenuItem>
-                    <MenuItem value="business">Business</MenuItem>
-                    <MenuItem value="technology">Technology</MenuItem>
-                    <MenuItem value="sports">Sports</MenuItem>
+                    {CATEGORIES.map((cat) => (
+                      <MenuItem key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </Grid>
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
-                  <InputLabel>Source</InputLabel>
+                  <InputLabel>{SOURCE_LABEL}</InputLabel>
                   <Select
                     value={source}
                     onChange={(e) => setSource(e.target.value)}
-                    label="Source"
+                    label={SOURCE_LABEL}
                   >
-                    <MenuItem value="All">All</MenuItem>
-                    <MenuItem value="nytimes">New York Times</MenuItem>
-                    <MenuItem value="the-guardian">The Guardian</MenuItem>
-                    <MenuItem value="news-api">News Org</MenuItem>
+                    {SOURCE.map((cat) => (
+                      <MenuItem key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </Grid>
               <Grid item xs={12} md={6}>
                 <TextField
-                  label="From Date"
+                  label={FROM_DATE}
                   type="date"
                   InputLabelProps={{ shrink: true }}
                   value={fromDate}
@@ -235,7 +238,7 @@ export const Filters: React.FC<FiltersProps> = ({ query, onSearch, onFilter, set
               </Grid>
               <Grid item xs={12} md={6}>
                 <TextField
-                  label="To Date"
+                  label={TO_DATE}
                   type="date"
                   InputLabelProps={{ shrink: true }}
                   value={toDate}
@@ -257,14 +260,14 @@ export const Filters: React.FC<FiltersProps> = ({ query, onSearch, onFilter, set
                 onClick={handleClearFilter}
                 sx={{ borderRadius: "20px" }}
               >
-                Clear Filters
+                {CLEAR_FILTER}
               </Button>
               <Button
                 variant="contained"
                 onClick={handleFilter}
                 sx={{ backgroundColor: "#1976d2", borderRadius: "20px" }}
               >
-                Apply Filters
+                {APPLY_FILTER}
               </Button>
             </Box>
           </CardContent>

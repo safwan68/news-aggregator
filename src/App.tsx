@@ -7,6 +7,7 @@ import Footer from "./components/Footer";
 
 const App: React.FC = () => {
   const [query, setQuery] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [filters, setFilters] = useState({
     category: "general",
     source: "All",
@@ -16,10 +17,12 @@ const App: React.FC = () => {
   });
 
   const handleSearch = (query: string) => {
-    setQuery(query);
+    setSearchQuery(query);
+    setQuery(""); 
   };
 
   const handleFilter = (updatedFilters: any) => {
+    setSearchQuery("");
     setFilters(updatedFilters);
   };
 
@@ -28,7 +31,7 @@ const App: React.FC = () => {
     <Header />
     <Container>
       <Filters query={query} onSearch={handleSearch} onFilter={handleFilter} setQuery={setQuery} />
-      <NewsFeed query={query} filters={filters} />
+      <NewsFeed query={searchQuery} filters={filters} />
     </Container>
     <Footer />
     </>
