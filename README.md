@@ -25,6 +25,9 @@ Prerequisites: Node.js, npm, docker installed
     Install dependencies:
     npm install
 
+    If you encounter dependency conflicts, you can run:
+    npm install --legacy-peer-deps
+
 **Running the App**
     npm start
 
