@@ -199,7 +199,6 @@ export const Filters: React.FC<FiltersProps> = ({
                 variant="contained"
                 onClick={handleFilter}
                 label={APPLY_FILTER}
-                sx={{ backgroundColor: "#1976d2" }}
               />
             </Box>
           </CardContent>
